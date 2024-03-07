@@ -46,6 +46,8 @@ const Dashboard = () => {
   const handleClick = () => {
     if (!location.trim()) {
       alert("Enter location");
+      setWeatherData("");
+      setForecastData("");
     } else setLocationSearched(location);
   };
 
