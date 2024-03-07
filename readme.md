@@ -7,3 +7,4 @@ npm run dev
 ```
 npm start
 ```
+Use your own API_KEY to run.
