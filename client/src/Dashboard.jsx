@@ -3,28 +3,50 @@ import axios from "axios";
 
 const Dashboard = () => {
   const [location, setLocation] = useState("");
+  const [locationSearched, setLocationSearched] = useState("");
   const [weatherData, setWeatherData] = useState(null);
   const [forecastData, setForecastData] = useState([]);
   const [error, setError] = useState("");
 
-  // fetching on click
-  const fetchWeatherData = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/weather/${location}`
-      );
-      setWeatherData(response.data);
-      const responseForecast = await axios.get(
-        `http://localhost:3000/forecast/${location}`
-      );
-      setForecastData(responseForecast.data.list);
-      console.log(responseForecast.data);
-      setError("");
-    } catch (error) {
-      setWeatherData("");
-      setForecastData("");
-      setError("Error fetching weather data.");
-    }
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      try {
+        if (locationSearched) {
+          const response = await axios.get(
+            `http://localhost:3000/weather/${locationSearched}`
+          );
+          setWeatherData(response.data);
+          setError("");
+        }
+      } catch (error) {
+        setWeatherData("");
+        setForecastData("");
+        setError("Error fetching weather data.");
+      }
+    };
+    const fetchForecastData = async () => {
+      try {
+        if (locationSearched) {
+          const responseForecast = await axios.get(
+            `http://localhost:3000/forecast/${locationSearched}`
+          );
+          setForecastData(responseForecast.data.list);
+          setError("");
+        }
+      } catch (error) {
+        setWeatherData("");
+        setForecastData("");
+        setError("Error fetching weather data.");
+      }
+    };
+    fetchWeatherData();
+    fetchForecastData();
+  }, [locationSearched]);
+
+  const handleClick = () => {
+    if (!location.trim()) {
+      alert("Enter location");
+    } else setLocationSearched(location);
   };
 
   return (
@@ -36,7 +58,7 @@ const Dashboard = () => {
           onChange={(e) => setLocation(e.target.value)}
           placeholder="Enter location (city)"
         />
-        <button onClick={fetchWeatherData}>Get Weather</button>
+        <button onClick={handleClick}>Get Weather</button>
       </div>
       {error && <p className="error-message">{error}</p>}
       {weatherData && (
